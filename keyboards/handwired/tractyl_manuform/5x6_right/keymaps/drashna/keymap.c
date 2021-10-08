@@ -29,13 +29,13 @@ bool enable_acceleration = false;
     K21, K22, K23, K24, K25, K26, K27, K28, K29, K2A  \
   ) \
   LAYOUT_5x6_right_wrapper( \
-     KC_ESC,  ________________NUMBER_LEFT________________,            ________________NUMBER_RIGHT_______________, UC_IRNY, \
+     KC_ESC,  ________________NUMBER_LEFT________________,            ________________NUMBER_RIGHT_______________, UC_CLUE, \
      SH_TT,   K01,    K02,      K03,     K04,     K05,                K06,     K07,     K08,     K09,     K0A,     SH_TT, \
      LALT_T(KC_TAB), K11, K12,  K13,     K14,     K15,                K16,     K17,     K18,     K19,     K1A,     RALT_T(K1B), \
      OS_LSFT, CTL_T(K21), K22,  K23,     K24,     K25,                K26,     K27,     K28,     K29, RCTL_T(K2A), OS_RSFT, \
                        OS_LALT, OS_LGUI,                                                OS_RGUI, OS_RALT, \
                                 KC_MUTE, KC_GRV,                                        KC_BTN3,  \
-                                         KC_SPC,  OS_LGUI,                     KC_ENT,  \
+                                         KC_SPC,  UC_IRNY,                     KC_ENT,  \
                                          BK_LWER, TT(_MOUSE),      TT(_MOUSE), DL_RAIS  \
   )
 #define LAYOUT_base_wrapper(...)       LAYOUT_5x6_right_base(__VA_ARGS__)
@@ -142,8 +142,14 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [_LOWER]           = { { RGB_MOD, RGB_RMOD}, { RGB_HUD, RGB_HUI } },
     [_ADJUST]          = { { CK_DOWN, CK_UP   }, { _______, _______ } },
 };
+// clang-format on
 #else
 bool encoder_update_user(uint8_t index, bool clockwise) {
+#    ifdef SWAP_HANDS_ENABLE
+    if (swap_hands) {
+        index ^= 1;
+    }
+#    endif
     if (index == 0) {
         tap_code_delay(clockwise ? KC_VOLD : KC_VOLU, 5);
     } else if (index == 1) {
@@ -152,7 +158,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return false;
 }
 #endif
-// clang-format on
 
 #ifdef POINTING_DEVICE_ENABLE
 static uint16_t mouse_timer           = 0;
